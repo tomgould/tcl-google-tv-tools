@@ -16,6 +16,7 @@ Everything here disables rather than uninstalls, so `pm enable` or a factory res
 | `scripts/tv-remote.py` | Pairs with the TV over the Android TV Remote v2 protocol, then sends keys, launches apps and reads status, without ADB. |
 | `batches/` | The five batches used on the 65C6K, with a reason for each package. |
 | `config/keep-list.txt` | Packages never to disable, with the reason for each. |
+| `docs/second-screen.md` | Using the TV as a screen for a Linux PC with Sunshine and Moonlight, and the three fixes it needed. |
 
 ## Using it
 
