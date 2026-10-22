@@ -1,0 +1,12 @@
+# Batch 4 (applied 2026-10-22): background services that cost memory. Medium risk: restart test afterwards.
+# Apply:  scripts/tv-batch.sh apply batches/batch-04.txt
+# Undo:   scripts/tv-batch.sh undo  batches/batch-04.txt
+#
+# Never in this batch: com.android.sdksandbox (UAD-NG: boot loop).
+
+com.mediatek.airplaydaemon                   # MediaTek AirPlay daemon, ~63 MB resident; not needed if you only cast from Android or Linux
+com.mediatek.AirplayAPK                      # MediaTek AirPlay app
+com.google.android.syncadapters.calendar     # Calendar sync, ~128 MB resident at idle; no calendar use on a TV
+com.android.adservices.api                   # Privacy Sandbox ad APIs (UAD-NG: Recommended)
+com.android.ondevicepersonalization.services # Privacy Sandbox on-device ad personalisation
+com.android.federatedcompute.services        # Privacy Sandbox federated learning

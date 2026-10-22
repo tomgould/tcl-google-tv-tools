@@ -1,0 +1,41 @@
+# Packages that must never be disabled on the TCL Smart TV Pro (G08).
+# scripts/tv-batch.sh refuses to disable anything listed here.
+# Sources: tv.cobanov.dev "Clean Your TV" prompt, tv-vibehack README, and
+# conflicting reports in livvaa/TCL-Google-TV-Debloat-Optimizer (see docs/research.md).
+
+com.tcl.tv                              # TV core / tuner
+com.tcl.tvinput                         # HDMI and tuner inputs
+com.tcl.suspension                      # Inputs/Source menu (reported to break HDMI switching)
+com.tcl.ttvs                            # reported to break the update menu
+com.tcl.providers.config                # disabling reported to drop Wi-Fi
+com.tcl.initsetup                       # disabling reported to drop Wi-Fi
+com.tcl.autopair                        # remote pairing
+com.tcl.systemserver                    # TCL system services
+com.tcl.systemui.plugin                 # TCL system UI
+com.tcl.globalkeyoverlay                # TCL remote key handling
+com.tcl.inputmethod.international       # on-screen keyboard
+com.tcl.miracast                        # screen mirroring from Linux/Android
+com.tcl.UpdatePeripheral                # remote/peripheral firmware updates
+com.google.android.tv.remote.service    # phone remote (Fairphone built-in TV controls)
+com.google.android.apps.tv.launcherx    # stock launcher: disabling can black-screen Android 14 Google TV
+com.google.android.apps.mediashell      # Google Cast receiver
+com.google.android.katniss              # Google Assistant / voice search
+com.google.android.tts                  # set as voice_recognition_service: needed for voice
+com.google.android.gms                  # Google Play services
+com.google.android.gsf                  # Google services framework
+com.android.vending                     # Play Store
+com.android.location.fused              # reported boot loop when disabled
+com.android.tv.settings                 # Settings app
+com.android.systemui                    # system UI
+com.android.providers.tv                # TV channel provider
+# Added 2026-10-22 from the second repo review and this TV's setup
+com.google.android.tungsten.setupwraith # UAD-NG: disabling breaks volume control on Sony Google TVs
+com.android.sdksandbox                  # UAD-NG: disabling causes a boot loop
+com.android.tv.frameworkpackagestubs    # catches links with no app to handle them; apps can crash without it
+com.tcl.gamebar                         # TCL Game Mode (protected by the TCL debloat script)
+com.tcl.guard                           # Safety Guard: owns the per-app Auto Launch (AUTO_START) setting
+com.tcl.useragreement                   # TCL terms, including the Freeview Play agreement
+com.spocky.projengmenu                  # Projectivy Launcher, if used as the home screen
+io.github.sds100.keymapper              # Key Mapper: remaps the branded buttons
+com.mediatek.backgrounddetection        # MediaTek AI picture quality (AipqService), persistent system app
+com.tvos                                # TV framework resources

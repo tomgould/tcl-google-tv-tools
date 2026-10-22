@@ -1,0 +1,15 @@
+# Batch 1 (2026-10-22): lowest-risk TCL extras.
+# Apply:  scripts/tv-batch.sh apply batches/batch-01.txt
+# Undo:   scripts/tv-batch.sh undo  batches/batch-01.txt
+
+com.tcl.channelplus          # TCL free ad-supported channels
+com.tcl.esticker             # on-screen promo stickers
+com.tcl.messagebox           # TCL notifications and offers
+com.tcl.exhibit              # shop demo mode
+com.tcl.ocean.instructions   # built-in manual
+com.tcl.repairguide          # repair guide
+com.tcl.logkit               # TCL diagnostic logging
+com.tcl.interactive          # TCL interactive content
+com.tcl.smartalexa           # Alexa: not used
+com.tcl.airplay2             # AirPlay: only casts from Android/Linux
+com.tcl.magiconnectfree      # TCL phone app: uses the Fairphone's built-in TV remote instead

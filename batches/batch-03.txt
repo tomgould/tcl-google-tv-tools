@@ -1,0 +1,10 @@
+# Batch 3 (applied 2026-10-22): Google feedback/telemetry and setup leftovers. Low risk.
+# Sources: TCL-Google-TV-Debloat-Optimizer list, UAD-NG ("Recommended"), tv-vibehack examples.
+# Apply:  scripts/tv-batch.sh apply batches/batch-03.txt
+# Undo:   scripts/tv-batch.sh undo  batches/batch-03.txt
+
+com.google.android.feedback               # Google crash/feedback reporter; can read logs and usage stats
+com.android.tv.feedbackconsent            # TV feedback consent screen (tv-vibehack: ads/telemetry)
+com.google.android.play.games             # Play Games
+android.autoinstalls.config.google.gtvpai # Play Auto Install: pushes partner apps at setup/reset
+com.google.android.onetimeinitializer     # first-setup only
