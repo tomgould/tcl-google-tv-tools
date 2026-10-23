@@ -51,6 +51,7 @@ Read each batch file before applying it, and test the TV (inputs, voice, casting
   adb shell cmd appops write-settings
   ```
 - **If you use Projectivy and watch through an HDMI device**, set "Launch on boot" on that input's tile (long-press it). Otherwise, once Projectivy is allowed to start at boot, it can land on top of the last-used input after a full restart.
+- **That autostart runs twice.** After a restart or power cut, Projectivy opens the input at boot, then again the first time its home screen opens, so the first Home press goes back to the input. The second press works. Switching off and on with the remote doesn't trigger it.
 - **Save before you restart.** In Android 14, app-op changes are written to disk 30 minutes after they're made, and package changes after 10 seconds. `adb reboot` skips the normal shutdown, so recent changes can be lost. Use `adb shell cmd appops write-settings`, then `adb shell svc power reboot`.
 - **Apps only mode disables the Google Assistant**, so the voice button stops working.
 - **Some debloat lists break things:**
@@ -61,6 +62,8 @@ Read each batch file before applying it, and test the TV (inputs, voice, casting
 
   These are in the keep-list.
 - **Reading the screen with `uiautomator dump`** suspends other accessibility services while it runs, including a launcher's Home override.
+- **There's no system file picker.** This TCL has no DocumentsUI, so an app's "save to file" export fails with "You don't have an app that can do this" (Projectivy's "Save locally", for example). `adb backup` leaves out the data of apps that target Android 12 or later, so backing up app settings needs a file manager installed first.
+- **TCL's EDID setting** is Settings > Channels and inputs > External Inputs > HDMI Advanced Standard: Off is HDMI 1.4, On is HDMI 2.0/2.1, and Auto picks per device.
 - **The branded remote buttons use TCL keycodes.** On this remote, the Disney+ button sends HID usage `0x0C004D`, which becomes keycode 4141. Its handler can't be changed without root, but an accessibility remapper such as Key Mapper can catch it. Key Mapper only learns the key from a real press, not from `adb shell input`. One intent switches straight to HDMI 1:
   ```bash
   adb shell am start -a android.intent.action.VIEW \

@@ -14,7 +14,9 @@ S=(-s "$TV")
 
 adb "${S[@]}" shell dumpsys activity activities | grep -m1 topResumedActivity | grep -oE 'u0 [^ ]+' || true
 adb "${S[@]}" shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
-adb "${S[@]}" shell cat /sdcard/ui.xml | python3 -I -c '
+xml=$(adb "${S[@]}" shell cat /sdcard/ui.xml)
+adb "${S[@]}" shell rm -f /sdcard/ui.xml
+python3 -I -c '
 import sys, xml.etree.ElementTree as ET
 root = ET.fromstring(sys.stdin.read())
 for n in root.iter("node"):
@@ -24,7 +26,7 @@ for n in root.iter("node"):
     mark = ">" if n.get("focused") == "true" else " "
     state = " [on]" if n.get("checked") == "true" else ""
     print(mark, label.strip()[:70] + state, " ", n.get("bounds"))
-'
+' <<<"$xml"
 
 if [ $# -ge 1 ]; then
   adb "${S[@]}" exec-out screencap -p > "$1.full.png"

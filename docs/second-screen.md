@@ -20,6 +20,10 @@ output_name = eDP-1-1
 origin_web_ui_allowed = pc
 ```
 
+## Using it
+
+On the TV, open Moonlight, pick the PC, then Desktop. One press of Back on the TV remote ends the session without a prompt, and Sunshine puts the PC's sound back in the same second.
+
 ## Problems and fixes
 
 - **Sunshine hangs at "Detecting displays"** after `Couldn't release NvFBC context`. NvFBC needs a patched NVIDIA driver on consumer cards. `capture = x11` skips it.
@@ -36,3 +40,5 @@ origin_web_ui_allowed = pc
 ## Not covered
 
 An extra screen, as opposed to a copy of an existing one, needs a display Sunshine can stream that the PC isn't showing. A dummy HDMI plug is the simplest way on X11. That hasn't been tested here yet, and neither has the delay.
+
+Faking the display in software is risky on NVIDIA if your monitors come through a dock. The driver's `ConnectedMonitor` option replaces its own detection of every connected display, so each docked monitor would have to be listed by hand.
