@@ -58,5 +58,7 @@ check "screensaver" "com.google.android.apps.tv.dreamx/.service.Backdrop" "$(tv 
 # For information only
 echo "info  uptime $(tv "cut -d' ' -f1 /proc/uptime")s, boot reason $(tv getprop sys.boot.reason), $(tv grep MemAvailable /proc/meminfo | tr -s ' ')"
 echo "info  on screen: $(tv dumpsys activity activities | grep -m1 topResumedActivity | grep -oE '[a-z0-9_.]+/[A-Za-z0-9_.]+' | head -1)"
+cec=$(tv dumpsys hdmi_control | sed -n '/mDeviceInfos:/,/CecSwitches/p' | grep -v 'logical_address: 0x00 ' | grep -oE 'display_name: .* power_status|physical_address: 0x[0-9a-f]+' | sed -E 's/display_name: (.*) power_status/\1/; s/physical_address: 0x([0-9a-f])000/on HDMI \1;/' | paste -sd' ' - | sed 's/;$//')
+echo "info  CEC devices: ${cec:-none (is CEC switched on in the HDMI device settings?)}"
 
 [ "$fails" -eq 0 ] && echo "All checks passed." || { echo "$fails check(s) failed."; exit 1; }
