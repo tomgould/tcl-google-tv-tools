@@ -1,0 +1,10 @@
+[Unit]
+Description=Unplug the virtual TV screen when the TV disconnects from Sunshine
+After=app-dev.lizardbyte.app.Sunshine.service
+
+[Service]
+ExecStart=%h/tcl-google-tv-tools/laptop/tv-screen-follow.sh
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

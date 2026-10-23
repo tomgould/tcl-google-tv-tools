@@ -3,3 +3,5 @@ __pycache__/
 logs/
 *.png
 ui.xml
+laptop/tv-screen
+laptop/*.edid

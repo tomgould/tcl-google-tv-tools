@@ -1,0 +1,5 @@
+[Unit]
+Description=Virtual "TV screen" monitor for Sunshine (evdi)
+
+[Service]
+ExecStart=%h/tcl-google-tv-tools/laptop/tv-screen %h/tcl-google-tv-tools/laptop/tv-screen-4k.edid
