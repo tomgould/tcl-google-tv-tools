@@ -14,7 +14,8 @@ Everything here disables rather than uninstalls, so `pm enable` or a factory res
 | `scripts/tv-status.sh` | Read-only health check. Confirms every batch is still disabled, nothing on the keep-list is disabled, the boot permissions and accessibility services are in place, and the settings are as expected. Run it after a TCL update. |
 | `scripts/tv-restart.sh` | Restarts without losing recent changes (saves app-ops, waits for package settings, uses a normal shutdown), then runs the health check. |
 | `scripts/tv-remote.py` | Pairs with the TV over the Android TV Remote v2 protocol, then sends keys, launches apps and reads status, without ADB. |
-| `batches/` | The six batches used on the 65C6K, with a reason for each package. |
+| `scripts/tv-youtube.sh` | Sends a YouTube link from this computer to SmartTube on the TV (waking it if needed). For when the stock YouTube app is disabled, because SmartTube does not show up in the Cast list. |
+| `batches/` | The seven batches used on the 65C6K, with a reason for each package. |
 | `config/keep-list.txt` | Packages never to disable, with the reason for each. |
 | `docs/second-screen.md` | Using the TV as a screen for a Linux PC with Sunshine and Moonlight: either an existing screen, or an extra 4K screen in software that only exists while the TV is connected. |
 | `laptop/` | The extra screen: `tv-screen.c` plugs a virtual monitor into evdi, `make-edid.py` describes it, `tv-screen-prep.sh` is Sunshine's prep command, `tv-screen-follow.sh` unplugs it when the TV disconnects, and `tv-screen-layout.py` saves the GNOME layout. |

@@ -1,0 +1,10 @@
+# Batch 7 (2026-11-12): the stock YouTube apps, so only SmartTube (F-Droid build, ad-free) is left.
+# Casting from a laptop opened the stock YouTube app, with its ads.
+# SmartTube is not found by the Cast list. It needs a one-off TV-code link and must be open on
+# the TV. scripts/tv-youtube.sh sends a link to it from this PC instead.
+# A cast from a browser still plays, in the TV's built-in Cast receiver, and that player showed ads.
+# Apply:  scripts/tv-batch.sh apply batches/batch-07.txt
+# Undo:   scripts/tv-batch.sh undo  batches/batch-07.txt
+
+com.google.android.youtube.tv        # YouTube for Google TV (has ads; was the Cast target for YouTube)
+com.google.android.youtube.tvmusic   # YouTube Music for TV
