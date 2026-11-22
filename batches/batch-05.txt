@@ -1,0 +1,8 @@
+# Batch 5: streaming apps not used on this TV. An example; edit it to match what you use.
+# Play Games is in batch 3.
+# Apply:  scripts/tv-batch.sh apply batches/batch-05.txt
+# Undo:   scripts/tv-batch.sh undo  batches/batch-05.txt
+
+com.disney.disneyplus   # Disney+ (user-installed)
+com.tubitv              # Tubi (user-installed, likely pushed by Play Auto Install)
+uk.co.bbc.sounds        # BBC Sounds

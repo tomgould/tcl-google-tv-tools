@@ -1,0 +1,12 @@
+# Batch 2 (2026-10-22): TCL home feed and account services.
+# Apply:  scripts/tv-batch.sh apply batches/batch-02.txt
+# Undo:   scripts/tv-batch.sh undo  batches/batch-02.txt
+#
+# Held back from the original candidate list (run as android.uid.system):
+#   com.tcl.partnercustomizer  has TKey* activities (likely a branded remote key) and LauncherDefaultService
+#   com.tcl.guard              purpose unknown
+
+com.tcl.waterfall.overseas   # TCL home content feed (starts on boot)
+com.tcl.tv.tclhome_passive   # TCL Home background service (starts on boot)
+com.tcl.usercenter           # TCL account (starts on boot, ~15 MB resident)
+com.tcl.t_solo               # TCL service, purpose unclear; removed by livvaa script

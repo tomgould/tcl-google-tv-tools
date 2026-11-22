@@ -1,0 +1,92 @@
+# TCL Google TV tools
+
+Scripts and notes for decluttering a TCL Google TV over ADB, without root. Built for and run on a TCL 65C6K (Android 14, MediaTek MT9689).
+
+Everything here disables rather than uninstalls, so `pm enable` or a factory reset undoes it.
+
+## What's here
+
+| Path | What it does |
+|---|---|
+| `scripts/tv-batch.sh` | `apply`, `undo` or `status` for a batch file of packages. Refuses anything in the keep-list, skips packages that aren't installed, and logs every change to `logs/changes.log`. |
+| `scripts/rearm-projectivy.sh` | Restores Projectivy Launcher's Home-button override if TCL's boot blocker stopped it (see below). |
+| `scripts/tv-screen.sh` | Prints the current screen as text, with an optional screenshot. |
+| `scripts/tv-status.sh` | Read-only health check. Confirms every batch is still disabled, nothing on the keep-list is disabled, the boot permissions and accessibility services are in place, and the settings are as expected. Run it after a TCL update. |
+| `scripts/tv-restart.sh` | Restarts without losing recent changes (saves app-ops, waits for package settings, uses a normal shutdown), then runs the health check. |
+| `scripts/tv-remote.py` | Pairs with the TV over the Android TV Remote v2 protocol, then sends keys, launches apps and reads status, without ADB. |
+| `scripts/tv-youtube.sh` | Sends a YouTube link from this computer to SmartTube on the TV (waking it if needed). For when the stock YouTube app is disabled, because SmartTube does not show up in the Cast list. |
+| `tests/` | Offline tests for the scripts, with a stand-in `adb` (see Tests below). |
+| `batches/` | The seven batches used on the 65C6K, with a reason for each package. |
+| `config/keep-list.txt` | Packages never to disable, with the reason for each. |
+| `docs/second-screen.md` | Using the TV as a screen for a Linux PC with Sunshine and Moonlight: either an existing screen, or an extra 4K screen in software that only exists while the TV is connected. |
+| `laptop/` | The extra screen: `tv-screen.c` plugs a virtual monitor into evdi, `make-edid.py` describes it, `tv-screen-prep.sh` is Sunshine's prep command, `tv-screen-follow.sh` unplugs it when the TV disconnects, and `tv-screen-layout.py` saves the GNOME layout. |
+
+## Using it
+
+Turn on Developer options (press OK on the build number seven times) and USB debugging, then:
+
+```bash
+export TV=192.168.1.50:5555            # your TV's address
+adb connect "$TV"
+scripts/tv-batch.sh status batches/batch-01.txt
+scripts/tv-batch.sh apply  batches/batch-01.txt
+scripts/tv-batch.sh undo   batches/batch-01.txt
+```
+
+For the remote script, install `androidtvremote2` (see `requirements.txt`), then:
+
+```bash
+export TV_HOST=192.168.1.50
+python3 scripts/tv-remote.py pair      # type the 6-character code shown on the TV
+python3 scripts/tv-remote.py status
+python3 scripts/tv-remote.py key HOME
+```
+
+The pairing key is saved in `~/.config/tcl_tv/remote/`. Keep it private.
+
+Read each batch file before applying it, and test the TV (inputs, voice, casting, your apps) between batches.
+
+## Tests
+
+The tests run offline, with no TV and no network. A stand-in `adb` in `tests/fake-bin/` answers from files and records every call, and `androidtvremote2` is replaced by a fake. They cover the batch script (keep-list refusals, disabling with `disable-user` only, skipping absent packages, the change log), the health check (passing, and failing when a package or setting has moved, without changing anything), the restart order, the YouTube link check, the remote script's key handling and pairing-key permissions, and the batch and keep-list files themselves.
+
+```bash
+python3 -m unittest discover -s tests -v    # standard library only
+pytest tests                                # also works, if pytest is installed
+```
+
+## Things worth knowing
+
+- **TCL blocks third-party apps from starting at boot.** A system component called TclAppBoot refuses to start apps that lack a TCL-only app-op, `AUTO_START`, which defaults to `ignore`. That's why launchers and remappers stop working after a restart. Allow it per app:
+  ```bash
+  adb shell cmd appops set <package> AUTO_START allow
+  adb shell cmd appops write-settings
+  ```
+- **If you use Projectivy and watch through an HDMI device**, set "Launch on boot" on that input's tile (long-press it). Otherwise, once Projectivy is allowed to start at boot, it can land on top of the last-used input after a full restart.
+- **That autostart runs twice.** After a restart or power cut, Projectivy opens the input at boot, then again the first time its home screen opens, so the first Home press goes back to the input. The second press works. Switching off and on with the remote doesn't trigger it.
+- **Save before you restart.** In Android 14, app-op changes are written to disk 30 minutes after they're made, and package changes after 10 seconds. `adb reboot` skips the normal shutdown, so recent changes can be lost. Use `adb shell cmd appops write-settings`, then `adb shell svc power reboot`.
+- **Apps only mode disables the Google Assistant**, so the voice button stops working.
+- **Some debloat lists break things:**
+  - `com.google.android.tts` is the voice recogniser.
+  - Disabling `setupwraith` reportedly breaks volume on some Google TVs.
+  - Disabling the stock launcher on Android 14 reportedly leaves a black screen.
+  - `com.android.sdksandbox` reportedly causes a boot loop.
+
+  These are in the keep-list.
+- **Reading the screen with `uiautomator dump`** suspends other accessibility services while it runs, including a launcher's Home override.
+- **There's no system file picker.** This TCL has no DocumentsUI, so an app's "save to file" export fails with "You don't have an app that can do this" (Projectivy's "Save locally", for example). `adb backup` leaves out the data of apps that target Android 12 or later, so backing up app settings needs a file manager installed first.
+- **TCL's EDID setting** is Settings > Channels and inputs > External Inputs > HDMI Advanced Standard: Off is HDMI 1.4, On is HDMI 2.0/2.1, and Auto picks per device.
+- **The branded remote buttons use TCL keycodes.** On this remote, the Disney+ button sends HID usage `0x0C004D`, which becomes keycode 4141. Its handler can't be changed without root, but an accessibility remapper such as Key Mapper can catch it. Key Mapper only learns the key from a real press, not from `adb shell input`. One intent switches straight to HDMI 1:
+  ```bash
+  adb shell am start -a android.intent.action.VIEW \
+    -d 'content://android.media.tv/passthrough/com.tcl.tvinput%2F.TvPassThroughService%2FHW15'
+  ```
+  The input ID (`HW15`) comes from `adb shell dumpsys tv_input` and may differ on other models.
+
+## After a software update
+
+Run `scripts/tv-status.sh`. It checks every switched-off package, the `AUTO_START` permission and the accessibility services against the setup, and names anything a TCL update has changed, without changing anything itself.
+
+## Licence
+
+MIT. See [LICENSE](LICENSE).

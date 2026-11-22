@@ -1,0 +1,13 @@
+# Batch 6 (2026-10-22): unused apps and services. Low risk; none were running.
+# Apply:  scripts/tv-batch.sh apply batches/batch-06.txt
+# Undo:   scripts/tv-batch.sh undo  batches/batch-06.txt
+#
+# Kept on purpose: com.tcl.dashboard (Quick Panel, may be opened by a remote button),
+# com.mediatek.backgrounddetection (AI picture quality, persistent), tv.mopa.ginga and com.tcl.eva
+# (unknown ties to live TV / system), com.google.android.inputmethod.latin (input methods are left alone).
+
+com.google.android.marvin.talkback   # TalkBack screen reader, unused
+com.android.dreams.basic             # basic colour screensaver; Ambient mode is used instead
+com.tcl.hearaid                      # TCL hearing aid, text magnifier and wireless speakers, unused
+com.tcl.gallery                      # TCL gallery and its own screensavers; Ambient mode is used instead
+com.tcl.ui_mediaCenter               # TCL USB/DLNA media player; VLC covers USB playback

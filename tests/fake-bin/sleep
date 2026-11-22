@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Tests don't wait: sleep returns at once.
+exit 0

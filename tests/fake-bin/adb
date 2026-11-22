@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# A stand-in for adb, so the tests never reach a TV or the network.
+# State lives in $FAKE_ADB_STATE:
+#   calls.log      every call, one per line (written here)
+#   state          what get-state prints (default: device)
+#   installed.txt  `pm list packages` output, one "package:name" per line
+#   disabled.txt   `pm list packages -d` output, changed by disable-user and enable
+#   responses.txt  other shell commands: "command<TAB>output", matched exactly
+#   boot_id        the boot ID; `svc power reboot` changes it
+# Output lines end in \r\n, as they do from a real TV.
+set -uo pipefail
+st="${FAKE_ADB_STATE:?FAKE_ADB_STATE not set}"
+echo "$*" >> "$st/calls.log"
+
+crlf() { sed 's/$/\r/'; }
+
+[ "${1:-}" = "-s" ] && shift 2
+case "${1:-}" in
+  connect) echo "connected to ${2:-}"; exit 0 ;;
+  get-state) cat "$st/state" 2>/dev/null || echo device; exit 0 ;;
+  shell) shift ;;
+  *) exit 0 ;;
+esac
+cmd="$*"
+touch "$st/installed.txt" "$st/disabled.txt"
+
+case "$cmd" in
+  "pm list packages -d"*) crlf < "$st/disabled.txt" ;;
+  "pm list packages"*) crlf < "$st/installed.txt" ;;
+  "pm disable-user --user 0 "*)
+    p="${cmd##* }"
+    grep -qxF "package:$p" "$st/disabled.txt" || echo "package:$p" >> "$st/disabled.txt"
+    echo "Package $p new state: disabled-user" | crlf ;;
+  "pm enable --user 0 "*)
+    p="${cmd##* }"
+    grep -vxF "package:$p" "$st/disabled.txt" > "$st/disabled.tmp" || true
+    mv "$st/disabled.tmp" "$st/disabled.txt"
+    echo "Package $p new state: enabled" | crlf ;;
+  "cat /proc/sys/kernel/random/boot_id") cat "$st/boot_id" 2>/dev/null | crlf ;;
+  "svc power reboot") echo "after-restart" > "$st/boot_id" ;;
+  *)
+    if [ -f "$st/responses.txt" ]; then
+      awk -F'\t' -v c="$cmd" '$1 == c { print $2 }' "$st/responses.txt" | crlf
+    fi ;;
+esac
+exit 0
